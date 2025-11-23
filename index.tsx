@@ -24,6 +24,14 @@ const InfoIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
 );
 
+const CalendarIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+);
+
+const GlobeIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+);
+
 // --- Types ---
 type Message = {
   role: "user" | "model";
@@ -55,6 +63,8 @@ Als je iets niet kunt vinden op het kanaal, geef dit dan eerlijk aan, maar probe
 `;
 
 const App = () => {
+  const [hasAccess, setHasAccess] = useState(false);
+  const [email, setEmail] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "model",
@@ -72,6 +82,37 @@ const App = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim().includes("@")) {
+      sendEmailToAdmins(email);
+      setHasAccess(true);
+    }
+  };
+
+  const sendEmailToAdmins = async (userEmail: string) => {
+    try {
+      await fetch("https://formsubmit.co/ajax/info@aetherlink.ai", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          _subject: "Nieuwe Login: Studio Nieuwe Tijd",
+          _cc: "info@nieuwetijd.nl,info@studionieuwetijd.nl",
+          email: userEmail,
+          user_email: userEmail,
+          message: `Een nieuwe gebruiker heeft zich aangemeld voor de intelligentie.`,
+          timestamp: new Date().toLocaleString('nl-NL'),
+          _template: "table"
+        })
+      });
+    } catch (error) {
+      console.error("Kon email notificatie niet verzenden:", error);
+    }
+  };
 
   const handleSend = async (overrideText?: string) => {
     const textToSend = typeof overrideText === 'string' ? overrideText : input;
@@ -201,120 +242,157 @@ const App = () => {
         </p>
       </header>
 
-      {/* Chat Container */}
+      {/* Main Content Area */}
       <div className="flex-1 w-full max-w-4xl mx-auto px-4 pb-4 overflow-hidden flex flex-col z-10">
+        {!hasAccess ? (
+          <div className="flex-1 flex flex-col items-center justify-center animate-fade-in">
+            <div className="w-full max-w-md bg-[#111]/80 backdrop-blur-xl border border-[#333] p-8 rounded-2xl shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent opacity-50"></div>
 
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin scrollbar-thumb-[#333] scrollbar-track-transparent pb-4">
-          {messages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"
-                }`}
-            >
-              <div
-                className={`relative max-w-[85%] md:max-w-[80%] rounded-2xl px-6 py-5 shadow-xl backdrop-blur-md border ${msg.role === "user"
-                  ? "bg-gradient-to-br from-[#d4af37] to-[#b8860b] text-black font-medium border-[#f1c40f]/20 rounded-br-none"
-                  : "bg-[#111] bg-opacity-80 text-gray-200 border-[#333] rounded-bl-none"
-                  }`}
-              >
-                {/* Text */}
-                <div className="whitespace-pre-wrap leading-relaxed text-sm md:text-base">
-                  {msg.text}
+              <h2 className="text-2xl font-serif text-center text-[#d4af37] mb-2">Welkom</h2>
+              <p className="text-center text-gray-400 mb-8 text-sm">Laat je e-mailadres achter om toegang te krijgen tot de intelligentie.</p>
+
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="relative">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="jouw@email.nl"
+                    className="w-full bg-black/50 border border-[#333] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] transition-all placeholder-gray-600"
+                  />
                 </div>
-
-                {/* Sources */}
-                {msg.role === "model" && msg.groundingSources && msg.groundingSources.length > 0 && (
-                  <div className="mt-4 pt-3 border-t border-white/10">
-                    <p className="text-[10px] uppercase tracking-wider font-semibold text-[#888] mb-2 flex items-center gap-2">
-                      <SearchIcon />
-                      Geverifieerde Bronnen
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {msg.groundingSources.map((source, i) => (
-                        <a
-                          key={i}
-                          href={source.uri}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs bg-black/40 hover:bg-[#d4af37]/20 hover:text-[#d4af37] transition-all text-gray-400 px-3 py-1.5 rounded-md border border-white/5 hover:border-[#d4af37]/30 truncate max-w-[220px] flex items-center gap-1"
-                          title={source.title}
-                        >
-                          <span className="w-1 h-1 rounded-full bg-[#d4af37] inline-block mr-1"></span>
-                          {source.title || new URL(source.uri).hostname}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-[#111] bg-opacity-80 border border-[#333] rounded-2xl rounded-bl-none px-6 py-5 flex items-center gap-2">
-                <span className="text-xs text-gray-500 uppercase tracking-widest mr-2">Zoeken</span>
-                <div className="w-1.5 h-1.5 bg-[#d4af37] rounded-full animate-bounce"></div>
-                <div className="w-1.5 h-1.5 bg-[#d4af37] rounded-full animate-bounce delay-100"></div>
-                <div className="w-1.5 h-1.5 bg-[#d4af37] rounded-full animate-bounce delay-200"></div>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Floating Input Area */}
-        <div className="mt-4 flex flex-col gap-3">
-          {/* Quick Suggestions - Horizontal Scroll */}
-          {messages.length < 3 && (
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide justify-center">
-              <button
-                onClick={() => handleSend("Wat is de laatste aflevering van Studio Nieuwe Tijd?")}
-                className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
-              >
-                <PodcastIcon /> Laatste aflevering
-              </button>
-              <button
-                onClick={() => handleSend("Wat zegt Niels over de huidige tijdgeest?")}
-                className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
-              >
-                <SparklesIcon /> Tijdgeest & Transformatie
-              </button>
-              <button
-                onClick={() => handleSend("Vertel me meer over soevereiniteit.")}
-                className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
-              >
-                <InfoIcon /> Soevereiniteit
-              </button>
-            </div>
-          )}
-
-          <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#d4af37]/20 to-[#b8860b]/20 rounded-full blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
-            <div className="relative flex items-center bg-[#111] rounded-full border border-[#333] focus-within:border-[#d4af37]/50 shadow-2xl transition-all">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Stel je vraag aan de podcast..."
-                className="w-full bg-transparent text-gray-100 placeholder-gray-600 px-6 py-4 focus:outline-none text-sm md:text-base"
-                disabled={isLoading}
-              />
-              <button
-                onClick={() => handleSend()}
-                disabled={!input.trim() || isLoading}
-                className="mr-2 p-3 bg-[#d4af37] hover:bg-[#c5a028] text-black rounded-full transition-all disabled:opacity-50 disabled:scale-90 shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:shadow-[0_0_20px_rgba(212,175,55,0.5)]"
-              >
-                <SendIcon />
-              </button>
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-[#b8860b] to-[#d4af37] hover:from-[#d4af37] hover:to-[#f1c40f] text-black font-bold py-3 rounded-lg transition-all transform hover:scale-[1.02] shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:shadow-[0_0_25px_rgba(212,175,55,0.4)]"
+                >
+                  Betreed de Nieuwe Tijd
+                </button>
+              </form>
             </div>
           </div>
-          <p className="text-center text-[10px] text-[#444] font-medium tracking-wide">
-            AI gegenereerd op basis van @nieuwetijdpodcast5843 content
-          </p>
-        </div>
+        ) : (
+          <>
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin scrollbar-thumb-[#333] scrollbar-track-transparent pb-4">
+              {messages.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"
+                    }`}
+                >
+                  <div
+                    className={`relative max-w-[85%] md:max-w-[80%] rounded-2xl px-6 py-5 shadow-xl backdrop-blur-md border ${msg.role === "user"
+                      ? "bg-gradient-to-br from-[#d4af37] to-[#b8860b] text-black font-medium border-[#f1c40f]/20 rounded-br-none"
+                      : "bg-[#111] bg-opacity-80 text-gray-200 border-[#333] rounded-bl-none"
+                      }`}
+                  >
+                    {/* Text */}
+                    <div className="whitespace-pre-wrap leading-relaxed text-sm md:text-base">
+                      {msg.text}
+                    </div>
+
+                    {/* Sources */}
+                    {msg.role === "model" && msg.groundingSources && msg.groundingSources.length > 0 && (
+                      <div className="mt-4 pt-3 border-t border-white/10">
+                        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#888] mb-2 flex items-center gap-2">
+                          <SearchIcon />
+                          Geverifieerde Bronnen
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {msg.groundingSources.map((source, i) => (
+                            <a
+                              key={i}
+                              href={source.uri}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs bg-black/40 hover:bg-[#d4af37]/20 hover:text-[#d4af37] transition-all text-gray-400 px-3 py-1.5 rounded-md border border-white/5 hover:border-[#d4af37]/30 truncate max-w-[220px] flex items-center gap-1"
+                              title={source.title}
+                            >
+                              <span className="w-1 h-1 rounded-full bg-[#d4af37] inline-block mr-1"></span>
+                              {source.title || new URL(source.uri).hostname}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-[#111] bg-opacity-80 border border-[#333] rounded-2xl rounded-bl-none px-6 py-5 flex items-center gap-2">
+                    <span className="text-xs text-gray-500 uppercase tracking-widest mr-2">Zoeken</span>
+                    <div className="w-1.5 h-1.5 bg-[#d4af37] rounded-full animate-bounce"></div>
+                    <div className="w-1.5 h-1.5 bg-[#d4af37] rounded-full animate-bounce delay-100"></div>
+                    <div className="w-1.5 h-1.5 bg-[#d4af37] rounded-full animate-bounce delay-200"></div>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Floating Input Area */}
+            <div className="mt-4 flex flex-col gap-3">
+              {/* Quick Suggestions - Horizontal Scroll */}
+              {messages.length < 3 && (
+                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide justify-center">
+                  <button
+                    onClick={() => handleSend("Wat is de laatste aflevering van Studio Nieuwe Tijd?")}
+                    className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
+                  >
+                    <PodcastIcon /> Laatste aflevering
+                  </button>
+                  <button
+                    onClick={() => handleSend("Vertel me meer over autonomie.")}
+                    className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
+                  >
+                    <InfoIcon /> Autonomie
+                  </button>
+                  <button
+                    onClick={() => handleSend("Welke events staan er gepland?")}
+                    className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
+                  >
+                    <CalendarIcon /> Nieuwe Tijd Events
+                  </button>
+                  <button
+                    onClick={() => handleSend("Vertel me over Nieuwe Tijd op Reis.")}
+                    className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
+                  >
+                    <GlobeIcon /> Nieuwe Tijd op Reis
+                  </button>
+                </div>
+              )}
+
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#d4af37]/20 to-[#b8860b]/20 rounded-full blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                <div className="relative flex items-center bg-[#111] rounded-full border border-[#333] focus-within:border-[#d4af37]/50 shadow-2xl transition-all">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Stel je vraag aan de podcast..."
+                    className="w-full bg-transparent text-gray-100 placeholder-gray-600 px-6 py-4 focus:outline-none text-sm md:text-base"
+                    disabled={isLoading}
+                  />
+                  <button
+                    onClick={() => handleSend()}
+                    disabled={!input.trim() || isLoading}
+                    className="mr-2 p-3 bg-[#d4af37] hover:bg-[#c5a028] text-black rounded-full transition-all disabled:opacity-50 disabled:scale-90 shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:shadow-[0_0_20px_rgba(212,175,55,0.5)]"
+                  >
+                    <SendIcon />
+                  </button>
+                </div>
+              </div>
+              <p className="text-center text-[10px] text-[#444] font-medium tracking-wide">
+                AI gegenereerd op basis van @nieuwetijdpodcast5843 content
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
