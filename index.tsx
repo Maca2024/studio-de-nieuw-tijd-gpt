@@ -23,6 +23,49 @@ const InfoIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
 );
 
+const StudioLogo = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160" className="h-40 md:h-52 w-auto relative z-20 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]">
+    <defs>
+      <linearGradient id="studioLogoGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style={{stopColor: '#f1c40f', stopOpacity: 1}} />
+        <stop offset="50%" style={{stopColor: '#d4af37', stopOpacity: 1}} />
+        <stop offset="100%" style={{stopColor: '#b8860b', stopOpacity: 1}} />
+      </linearGradient>
+      <filter id="studioLogoGlow">
+        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+    
+    {/* Outer Circle */}
+    <circle cx="80" cy="80" r="60" fill="none" stroke="url(#studioLogoGoldGradient)" strokeWidth="2" opacity="0.6" filter="url(#studioLogoGlow)"/>
+    
+    {/* Inner decorative elements */}
+    <circle cx="80" cy="80" r="45" fill="none" stroke="url(#studioLogoGoldGradient)" strokeWidth="1" opacity="0.4"/>
+    
+    {/* Center Symbol - Stylized "S" for Studio */}
+    <path d="M 65 60 Q 50 60 50 75 Q 50 85 65 85 Q 80 85 80 95 Q 80 105 65 110 Q 50 115 40 110" 
+          fill="none" stroke="url(#studioLogoGoldGradient)" strokeWidth="3" strokeLinecap="round" filter="url(#studioLogoGlow)"/>
+    
+    {/* Radiating lines */}
+    <line x1="80" y1="15" x2="80" y2="25" stroke="url(#studioLogoGoldGradient)" strokeWidth="2" opacity="0.7"/>
+    <line x1="80" y1="135" x2="80" y2="145" stroke="url(#studioLogoGoldGradient)" strokeWidth="2" opacity="0.7"/>
+    <line x1="15" y1="80" x2="25" y2="80" stroke="url(#studioLogoGoldGradient)" strokeWidth="2" opacity="0.7"/>
+    <line x1="135" y1="80" x2="145" y2="80" stroke="url(#studioLogoGoldGradient)" strokeWidth="2" opacity="0.7"/>
+    
+    {/* Text */}
+    <text x="170" y="70" fontFamily="'Playfair Display', serif" fontSize="28" fontWeight="700" fill="url(#studioLogoGoldGradient)" filter="url(#studioLogoGlow)">
+      STUDIO
+    </text>
+    <text x="170" y="100" fontFamily="'Playfair Display', serif" fontSize="24" fontWeight="700" fill="url(#studioLogoGoldGradient)" filter="url(#studioLogoGlow)">
+      Nieuwe Tijd
+    </text>
+  </svg>
+);
+
 // --- Types ---
 type Message = {
   role: "user" | "model";
@@ -182,12 +225,8 @@ const App = () => {
             {/* Layer 3: Central Gold Pulse */}
             <div className="absolute inset-0 bg-[#d4af37] rounded-full animate-pulse-gold pointer-events-none opacity-20"></div>
 
-            {/* Layer 4: The Logo Image */}
-            <img
-              src="https://studionieuwetijd.nl/wp-content/uploads/2021/03/cropped-Logo-Studio-Nieuwe-Tijd.png"
-              alt="Studio Nieuwe Tijd Logo"
-              className="h-40 md:h-52 w-auto relative z-20 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]"
-            />
+            {/* Layer 4: The Logo */}
+            <StudioLogo />
         </div>
         
         {/* Text Title */}
