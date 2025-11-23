@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { GoogleGenAI } from "@google/genai";
+import logo from "./logo-nieuwetijd.png";
 
 // --- Icons ---
 const SendIcon = () => (
@@ -35,7 +36,7 @@ type Message = {
 };
 
 // --- API Setup ---
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
 
 const SYSTEM_INSTRUCTION = `
 Je bent de exclusieve AI-assistent van 'Studio Nieuwe Tijd'. Je put je kennis DIRECT uit het YouTube-kanaal (@nieuwetijdpodcast5843) van Niels.
@@ -74,7 +75,7 @@ const App = () => {
 
   const handleSend = async (overrideText?: string) => {
     const textToSend = typeof overrideText === 'string' ? overrideText : input;
-    
+
     if (!textToSend.trim() || isLoading) return;
 
     setInput("");
@@ -84,8 +85,8 @@ const App = () => {
     setMessages((prev) => [...prev, { role: "user", text: textToSend }]);
 
     try {
-      const model = "gemini-2.5-flash"; 
-      
+      const model = "gemini-2.5-flash";
+
       const streamResult = await ai.models.generateContentStream({
         model: model,
         contents: [
@@ -112,7 +113,7 @@ const App = () => {
       for await (const chunk of streamResult) {
         const chunkText = chunk.text || "";
         fullText += chunkText;
-        
+
         if (chunk.candidates?.[0]?.groundingMetadata?.groundingChunks) {
           const chunks = chunk.candidates[0].groundingMetadata.groundingChunks;
           chunks.forEach((c: any) => {
@@ -163,33 +164,33 @@ const App = () => {
 
   return (
     <div className="flex flex-col h-screen bg-[#050505] text-[#e2e8f0] font-sans overflow-hidden relative selection:bg-[#d4af37] selection:text-black">
-      
+
       {/* Background Ambient Glow */}
       <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[#d4af37] opacity-[0.03] blur-[120px] rounded-full pointer-events-none z-0"></div>
 
       {/* Header - Centered, Big, Gold */}
       <header className="flex-none pt-12 pb-6 flex flex-col items-center justify-center z-10 relative px-4">
-        
+
         {/* Logo Container with Light Effects */}
         <div className="relative flex items-center justify-center mb-6">
-            
-            {/* Layer 1: Clockwise Rotating Gold Rays */}
-            <div className="absolute w-[180%] h-[180%] rounded-full bg-[conic-gradient(from_0deg,transparent_0%,#d4af37_10%,transparent_20%,#b8860b_30%,transparent_40%,#d4af37_50%,transparent_60%,#b8860b_70%,transparent_80%,#d4af37_90%,transparent_100%)] opacity-15 animate-rotate-cw blur-xl pointer-events-none"></div>
-            
-            {/* Layer 2: Counter-Clockwise Rotating Rays (Interference pattern) */}
-            <div className="absolute w-[150%] h-[150%] rounded-full bg-[conic-gradient(from_180deg,transparent_0%,#f1c40f_10%,transparent_20%,#d4af37_30%,transparent_40%,#f1c40f_50%,transparent_60%,#d4af37_70%,transparent_80%,#f1c40f_90%,transparent_100%)] opacity-10 animate-rotate-ccw blur-lg pointer-events-none"></div>
 
-            {/* Layer 3: Central Gold Pulse */}
-            <div className="absolute inset-0 bg-[#d4af37] rounded-full animate-pulse-gold pointer-events-none opacity-20"></div>
+          {/* Layer 1: Clockwise Rotating Gold Rays */}
+          <div className="absolute w-[180%] h-[180%] rounded-full bg-[conic-gradient(from_0deg,transparent_0%,#d4af37_10%,transparent_20%,#b8860b_30%,transparent_40%,#d4af37_50%,transparent_60%,#b8860b_70%,transparent_80%,#d4af37_90%,transparent_100%)] opacity-15 animate-rotate-cw blur-xl pointer-events-none"></div>
 
-            {/* Layer 4: The Logo Image */}
-            <img
-              src="https://studionieuwetijd.nl/wp-content/uploads/2021/03/cropped-Logo-Studio-Nieuwe-Tijd.png"
-              alt="Studio Nieuwe Tijd Logo"
-              className="h-40 md:h-52 w-auto relative z-20 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]"
-            />
+          {/* Layer 2: Counter-Clockwise Rotating Rays (Interference pattern) */}
+          <div className="absolute w-[150%] h-[150%] rounded-full bg-[conic-gradient(from_180deg,transparent_0%,#f1c40f_10%,transparent_20%,#d4af37_30%,transparent_40%,#f1c40f_50%,transparent_60%,#d4af37_70%,transparent_80%,#f1c40f_90%,transparent_100%)] opacity-10 animate-rotate-ccw blur-lg pointer-events-none"></div>
+
+          {/* Layer 3: Central Gold Pulse */}
+          <div className="absolute inset-0 bg-[#d4af37] rounded-full animate-pulse-gold pointer-events-none opacity-20"></div>
+
+          {/* Layer 4: The Logo Image */}
+          <img
+            src={logo}
+            alt="Studio Nieuwe Tijd Logo"
+            className="h-40 md:h-52 w-auto relative z-20 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]"
+          />
         </div>
-        
+
         {/* Text Title */}
         <h1 className="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-[#f1c40f] to-[#b5952f] tracking-[0.2em] font-serif uppercase text-center drop-shadow-sm relative z-20">
           Studio Nieuwe Tijd
@@ -202,22 +203,20 @@ const App = () => {
 
       {/* Chat Container */}
       <div className="flex-1 w-full max-w-4xl mx-auto px-4 pb-4 overflow-hidden flex flex-col z-10">
-        
+
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin scrollbar-thumb-[#333] scrollbar-track-transparent pb-4">
           {messages.map((msg, idx) => (
             <div
               key={idx}
-              className={`flex w-full ${
-                msg.role === "user" ? "justify-end" : "justify-start"
-              }`}
+              className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"
+                }`}
             >
               <div
-                className={`relative max-w-[85%] md:max-w-[80%] rounded-2xl px-6 py-5 shadow-xl backdrop-blur-md border ${
-                  msg.role === "user"
-                    ? "bg-gradient-to-br from-[#d4af37] to-[#b8860b] text-black font-medium border-[#f1c40f]/20 rounded-br-none"
-                    : "bg-[#111] bg-opacity-80 text-gray-200 border-[#333] rounded-bl-none"
-                }`}
+                className={`relative max-w-[85%] md:max-w-[80%] rounded-2xl px-6 py-5 shadow-xl backdrop-blur-md border ${msg.role === "user"
+                  ? "bg-gradient-to-br from-[#d4af37] to-[#b8860b] text-black font-medium border-[#f1c40f]/20 rounded-br-none"
+                  : "bg-[#111] bg-opacity-80 text-gray-200 border-[#333] rounded-bl-none"
+                  }`}
               >
                 {/* Text */}
                 <div className="whitespace-pre-wrap leading-relaxed text-sm md:text-base">
@@ -251,7 +250,7 @@ const App = () => {
               </div>
             </div>
           ))}
-          
+
           {isLoading && (
             <div className="flex justify-start">
               <div className="bg-[#111] bg-opacity-80 border border-[#333] rounded-2xl rounded-bl-none px-6 py-5 flex items-center gap-2">
@@ -267,54 +266,54 @@ const App = () => {
 
         {/* Floating Input Area */}
         <div className="mt-4 flex flex-col gap-3">
-            {/* Quick Suggestions - Horizontal Scroll */}
-            {messages.length < 3 && (
-                 <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide justify-center">
-                    <button
-                        onClick={() => handleSend("Wat is de laatste aflevering van Studio Nieuwe Tijd?")}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
-                    >
-                        <PodcastIcon /> Laatste aflevering
-                    </button>
-                    <button
-                        onClick={() => handleSend("Wat zegt Niels over de huidige tijdgeest?")}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
-                    >
-                        <SparklesIcon /> Tijdgeest & Transformatie
-                    </button>
-                     <button
-                        onClick={() => handleSend("Vertel me meer over soevereiniteit.")}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
-                    >
-                        <InfoIcon /> Soevereiniteit
-                    </button>
-                 </div>
-            )}
-
-            <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#d4af37]/20 to-[#b8860b]/20 rounded-full blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                <div className="relative flex items-center bg-[#111] rounded-full border border-[#333] focus-within:border-[#d4af37]/50 shadow-2xl transition-all">
-                    <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Stel je vraag aan de podcast..."
-                    className="w-full bg-transparent text-gray-100 placeholder-gray-600 px-6 py-4 focus:outline-none text-sm md:text-base"
-                    disabled={isLoading}
-                    />
-                    <button
-                    onClick={() => handleSend()}
-                    disabled={!input.trim() || isLoading}
-                    className="mr-2 p-3 bg-[#d4af37] hover:bg-[#c5a028] text-black rounded-full transition-all disabled:opacity-50 disabled:scale-90 shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:shadow-[0_0_20px_rgba(212,175,55,0.5)]"
-                    >
-                    <SendIcon />
-                    </button>
-                </div>
+          {/* Quick Suggestions - Horizontal Scroll */}
+          {messages.length < 3 && (
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide justify-center">
+              <button
+                onClick={() => handleSend("Wat is de laatste aflevering van Studio Nieuwe Tijd?")}
+                className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
+              >
+                <PodcastIcon /> Laatste aflevering
+              </button>
+              <button
+                onClick={() => handleSend("Wat zegt Niels over de huidige tijdgeest?")}
+                className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
+              >
+                <SparklesIcon /> Tijdgeest & Transformatie
+              </button>
+              <button
+                onClick={() => handleSend("Vertel me meer over soevereiniteit.")}
+                className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/80 border border-[#333] hover:border-[#d4af37]/50 rounded-full text-xs text-gray-400 hover:text-[#d4af37] transition-all whitespace-nowrap backdrop-blur-sm"
+              >
+                <InfoIcon /> Soevereiniteit
+              </button>
             </div>
-            <p className="text-center text-[10px] text-[#444] font-medium tracking-wide">
-                AI gegenereerd op basis van @nieuwetijdpodcast5843 content
-            </p>
+          )}
+
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-[#d4af37]/20 to-[#b8860b]/20 rounded-full blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+            <div className="relative flex items-center bg-[#111] rounded-full border border-[#333] focus-within:border-[#d4af37]/50 shadow-2xl transition-all">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Stel je vraag aan de podcast..."
+                className="w-full bg-transparent text-gray-100 placeholder-gray-600 px-6 py-4 focus:outline-none text-sm md:text-base"
+                disabled={isLoading}
+              />
+              <button
+                onClick={() => handleSend()}
+                disabled={!input.trim() || isLoading}
+                className="mr-2 p-3 bg-[#d4af37] hover:bg-[#c5a028] text-black rounded-full transition-all disabled:opacity-50 disabled:scale-90 shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:shadow-[0_0_20px_rgba(212,175,55,0.5)]"
+              >
+                <SendIcon />
+              </button>
+            </div>
+          </div>
+          <p className="text-center text-[10px] text-[#444] font-medium tracking-wide">
+            AI gegenereerd op basis van @nieuwetijdpodcast5843 content
+          </p>
         </div>
       </div>
     </div>

@@ -1,20 +1,40 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Studio Nieuwe Tijd Chatbot
 
-# Run and deploy your AI Studio app
+Een AI-chatbot die toegang heeft tot de wijsheid uit alle Studio Nieuwe Tijd podcast afleveringen.
 
-This contains everything you need to run your app locally.
+## Vereisten
 
-View your app in AI Studio: https://ai.studio/apps/drive/1NFnyTA-md3uqa3Wr1wBz1iaI9obtpwac
+Je hebt een **Google Gemini API key** nodig. Je kunt deze gratis verkrijgen op:
+https://aistudio.google.com/app/apikey
 
-## Run Locally
+## Installatie
 
-**Prerequisites:**  Node.js
+1. Kopieer `.env.example` naar `.env`:
+   ```bash
+   copy .env.example .env
+   ```
 
+2. Open `.env` en voeg je API key toe:
+   ```
+   VITE_API_KEY=jouw_api_key_hier
+   ```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+3. Installeer dependencies (indien nog niet gedaan):
+   ```bash
+   npm install
+   ```
+
+## Gebruik
+
+Start de development server:
+```bash
+npm run dev
+```
+
+De applicatie is dan beschikbaar op http://localhost:3000/
+
+## Probleem oplossen
+
+Als het scherm volledig zwart blijft:
+- Controleer of je `.env` bestand exists en de correcte API key bevat
+- Herstart de dev server na het toevoegen van de API key (Ctrl+C, dan opnieuw `npm run dev`)
