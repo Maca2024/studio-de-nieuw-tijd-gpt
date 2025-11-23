@@ -26,12 +26,12 @@ const InfoIcon = () => (
 const StudioLogo = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160" className="h-40 md:h-52 w-auto relative z-20 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]">
     <defs>
-      <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <linearGradient id="studioLogoGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style={{stopColor: '#f1c40f', stopOpacity: 1}} />
         <stop offset="50%" style={{stopColor: '#d4af37', stopOpacity: 1}} />
         <stop offset="100%" style={{stopColor: '#b8860b', stopOpacity: 1}} />
       </linearGradient>
-      <filter id="glow">
+      <filter id="studioLogoGlow">
         <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
         <feMerge>
           <feMergeNode in="coloredBlur"/>
@@ -41,26 +41,26 @@ const StudioLogo = () => (
     </defs>
     
     {/* Outer Circle */}
-    <circle cx="80" cy="80" r="60" fill="none" stroke="url(#goldGradient)" strokeWidth="2" opacity="0.6" filter="url(#glow)"/>
+    <circle cx="80" cy="80" r="60" fill="none" stroke="url(#studioLogoGoldGradient)" strokeWidth="2" opacity="0.6" filter="url(#studioLogoGlow)"/>
     
     {/* Inner decorative elements */}
-    <circle cx="80" cy="80" r="45" fill="none" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.4"/>
+    <circle cx="80" cy="80" r="45" fill="none" stroke="url(#studioLogoGoldGradient)" strokeWidth="1" opacity="0.4"/>
     
     {/* Center Symbol - Stylized "S" for Studio */}
     <path d="M 65 60 Q 50 60 50 75 Q 50 85 65 85 Q 80 85 80 95 Q 80 105 65 110 Q 50 115 40 110" 
-          fill="none" stroke="url(#goldGradient)" strokeWidth="3" strokeLinecap="round" filter="url(#glow)"/>
+          fill="none" stroke="url(#studioLogoGoldGradient)" strokeWidth="3" strokeLinecap="round" filter="url(#studioLogoGlow)"/>
     
     {/* Radiating lines */}
-    <line x1="80" y1="15" x2="80" y2="25" stroke="url(#goldGradient)" strokeWidth="2" opacity="0.7"/>
-    <line x1="80" y1="135" x2="80" y2="145" stroke="url(#goldGradient)" strokeWidth="2" opacity="0.7"/>
-    <line x1="15" y1="80" x2="25" y2="80" stroke="url(#goldGradient)" strokeWidth="2" opacity="0.7"/>
-    <line x1="135" y1="80" x2="145" y2="80" stroke="url(#goldGradient)" strokeWidth="2" opacity="0.7"/>
+    <line x1="80" y1="15" x2="80" y2="25" stroke="url(#studioLogoGoldGradient)" strokeWidth="2" opacity="0.7"/>
+    <line x1="80" y1="135" x2="80" y2="145" stroke="url(#studioLogoGoldGradient)" strokeWidth="2" opacity="0.7"/>
+    <line x1="15" y1="80" x2="25" y2="80" stroke="url(#studioLogoGoldGradient)" strokeWidth="2" opacity="0.7"/>
+    <line x1="135" y1="80" x2="145" y2="80" stroke="url(#studioLogoGoldGradient)" strokeWidth="2" opacity="0.7"/>
     
     {/* Text */}
-    <text x="170" y="70" fontFamily="'Playfair Display', serif" fontSize="28" fontWeight="700" fill="url(#goldGradient)" filter="url(#glow)">
+    <text x="170" y="70" fontFamily="'Playfair Display', serif" fontSize="28" fontWeight="700" fill="url(#studioLogoGoldGradient)" filter="url(#studioLogoGlow)">
       STUDIO
     </text>
-    <text x="170" y="100" fontFamily="'Playfair Display', serif" fontSize="24" fontWeight="700" fill="url(#goldGradient)" filter="url(#glow)">
+    <text x="170" y="100" fontFamily="'Playfair Display', serif" fontSize="24" fontWeight="700" fill="url(#studioLogoGoldGradient)" filter="url(#studioLogoGlow)">
       Nieuwe Tijd
     </text>
   </svg>
